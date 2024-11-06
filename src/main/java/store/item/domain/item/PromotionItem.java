@@ -4,13 +4,13 @@ import java.util.Date;
 
 public class PromotionItem {
     private final String promotionItemId;
-    private final Item item;
+    private final String itemId;
     private final PromotionRule promotionRule;
     private final long promotionStockQuantity;
 
-    public PromotionItem(String promotionItemId, Item item, PromotionRule promotionRule, long promotionStockQuantity) {
+    public PromotionItem(String promotionItemId, String itemId, PromotionRule promotionRule, long promotionStockQuantity) {
         this.promotionItemId = promotionItemId;
-        this.item = item;
+        this.itemId = itemId;
         this.promotionRule = promotionRule;
         this.promotionStockQuantity = promotionStockQuantity;
     }
@@ -19,8 +19,8 @@ public class PromotionItem {
         return promotionItemId;
     }
 
-    public Item getItem() {
-        return item;
+    public String getItemId() {
+        return itemId;
     }
 
     public PromotionRule getPromotionRule() {
