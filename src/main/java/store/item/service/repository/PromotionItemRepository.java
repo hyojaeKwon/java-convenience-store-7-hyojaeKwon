@@ -1,4 +1,4 @@
-package store.item.service;
+package store.item.service.repository;
 
 import store.item.domain.item.PromotionItem;
 

@@ -4,8 +4,8 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import store.item.domain.item.Item;
-import store.item.service.ItemRepository;
-import store.item.service.PromotionItemRepository;
+import store.item.service.repository.ItemRepository;
+import store.item.service.repository.PromotionItemRepository;
 
 public class ItemRepositoryImpl implements ItemRepository {
 
@@ -52,5 +52,18 @@ public class ItemRepositoryImpl implements ItemRepository {
     public Item update(String id, Item value) {
         this.save(id, value);
         return itemMap.get(id);
+    }
+
+    @Override
+    public Optional<Item> findByName(String name) {
+        return Optional.ofNullable(itemMap.get(name));
+    }
+
+    @Override
+    public Item delete(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException("id cannot be null");
+        }
+        return itemMap.remove(id);
     }
 }

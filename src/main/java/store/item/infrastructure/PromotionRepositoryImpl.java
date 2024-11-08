@@ -4,7 +4,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import store.item.domain.item.PromotionItem;
-import store.item.service.PromotionItemRepository;
+import store.item.service.repository.PromotionItemRepository;
 
 public class PromotionRepositoryImpl implements PromotionItemRepository {
 
@@ -52,5 +52,21 @@ public class PromotionRepositoryImpl implements PromotionItemRepository {
     public PromotionItem update(String id, PromotionItem value) {
         this.save(id, value);
         return promotionItemMap.get(id);
+    }
+
+    @Override
+    public Optional<PromotionItem> findByName(String name) {
+        if (name == null) {
+            throw new IllegalArgumentException("name can't be null");
+        }
+        return promotionItemMap.values().stream().filter(item -> item.getName().equals(name)).findFirst();
+    }
+
+    @Override
+    public PromotionItem delete(String id) {
+        if (id == null) {
+            throw new IllegalArgumentException("id can't be null");
+        }
+        return promotionItemMap.remove(id);
     }
 }
