@@ -1,8 +1,12 @@
 package store.item.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
 import store.item.controller.ItemStockService;
 import store.item.domain.item.Item;
 import store.item.domain.item.PromotionItem;
+import store.item.domain.item.value.ItemInfo;
 import store.item.service.repository.ItemRepository;
 import store.item.service.repository.PromotionItemRepository;
 
@@ -17,28 +21,31 @@ public class ItemStockServiceImpl implements ItemStockService {
     }
 
     @Override
-    public void updateItemStock(Item item, PromotionItem promotionItem) {
-        if (item.isPromotion()) {
-            item = updatePromotionItem(item, promotionItem);
+    public void updateItemStock(ItemInfo itemInfo) {
+        if (itemInfo.isPromotion()) {
+            updatePromotionItem(itemInfo.getPromotionItem());
         }
-        updateGeneralItem(item);
+        updateGeneralItem(itemInfo.getItem());
     }
 
-    private Item updatePromotionItem(Item item, PromotionItem promotionItem) {
-        if (promotionItem.getPromotionStockQuantity() == 0) {
-            promotionItemRepository.delete(promotionItem.getItemId());
-            item = item.closePromotion();
-            return item;
+    @Override
+    public List<ItemInfo> getAllItemInfo() {
+        List<Item> items = itemRepository.findAll();
+        List<ItemInfo> itemInfos = new ArrayList<>();
+
+        for (Item item : items) {
+            Optional<PromotionItem> promotionItem = promotionItemRepository.findByName(item.getName());
+            promotionItem.map(value -> itemInfos.add(ItemInfo.createPromotionItemInfo(item, value)))
+                    .orElseGet(() -> itemInfos.add(ItemInfo.createNotPromotionItemInfo(item)));
         }
+        return itemInfos;
+    }
+
+    private void updatePromotionItem(PromotionItem promotionItem) {
         promotionItemRepository.update(promotionItem.getPromotionItemId(), promotionItem);
-        return item;
     }
 
     private void updateGeneralItem(Item item) {
-        if (item.getStockQuantity() == 0) {
-            itemRepository.delete(item.getId());
-            return;
-        }
         itemRepository.update(item.getId(), item);
     }
 }

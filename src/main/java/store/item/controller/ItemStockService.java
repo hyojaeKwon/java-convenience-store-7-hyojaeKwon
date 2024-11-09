@@ -1,8 +1,10 @@
 package store.item.controller;
 
-import store.item.domain.item.Item;
-import store.item.domain.item.PromotionItem;
+import java.util.List;
+import store.item.domain.item.value.ItemInfo;
 
 public interface ItemStockService {
-    void updateItemStock(Item item, PromotionItem promotionItem);
+    void updateItemStock(ItemInfo itemInfo);
+
+    List<ItemInfo> getAllItemInfo();
 }
