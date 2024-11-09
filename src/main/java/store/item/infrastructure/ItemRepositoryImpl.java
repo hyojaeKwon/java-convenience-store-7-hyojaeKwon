@@ -1,5 +1,7 @@
 package store.item.infrastructure;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
@@ -65,5 +67,10 @@ public class ItemRepositoryImpl implements ItemRepository {
             throw new IllegalArgumentException("id cannot be null");
         }
         return itemMap.remove(id);
+    }
+
+    @Override
+    public List<Item> findAll() {
+        return new ArrayList<>(itemMap.values());
     }
 }
