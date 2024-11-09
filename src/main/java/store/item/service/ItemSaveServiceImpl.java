@@ -6,27 +6,39 @@ import store.common.util.IdHolder;
 import store.item.controller.ItemSaveService;
 import store.item.controller.dto.request.ItemRequest;
 import store.item.controller.dto.request.ItemSaveRequest;
+import store.item.controller.dto.request.PromotionRuleRequest;
 import store.item.domain.item.Item;
 import store.item.domain.item.PromotionItem;
+import store.item.domain.item.PromotionRule;
 import store.item.service.repository.ItemRepository;
 import store.item.service.repository.PromotionItemRepository;
+import store.item.service.repository.PromotionRuleRepository;
 
 public class ItemSaveServiceImpl implements ItemSaveService {
 
     private final ItemRepository itemRepository;
     private final PromotionItemRepository promotionItemRepository;
+    private final PromotionRuleRepository promotionRuleRepository;
     private final IdHolder idHolder;
 
     public ItemSaveServiceImpl(ItemRepository itemRepository, PromotionItemRepository promotionItemRepository,
-                               IdHolder idHolder) {
+                               PromotionRuleRepository promotionRuleRepository, IdHolder idHolder) {
         this.itemRepository = itemRepository;
         this.promotionItemRepository = promotionItemRepository;
+        this.promotionRuleRepository = promotionRuleRepository;
         this.idHolder = idHolder;
     }
 
     @Override
-    public void save(ItemSaveRequest itemSaveRequest) {
+    public void saveRule(List<PromotionRuleRequest> request) {
+        request.forEach(promotionRuleRequest -> {
+            PromotionRule promotionRule = PromotionRule.create(promotionRuleRequest);
+            promotionRuleRepository.save(promotionRule.getName(), promotionRule);
+        });
+    }
 
+    @Override
+    public void save(ItemSaveRequest itemSaveRequest) {
         List<Item> itemList = new ArrayList<>();
         List<PromotionItem> promotionItemList = new ArrayList<>();
 
@@ -35,23 +47,21 @@ public class ItemSaveServiceImpl implements ItemSaveService {
         promotionItemList.forEach(this::savePromotionItem);
     }
 
-    private void separateItemRequests(ItemSaveRequest itemSaveRequest, List<PromotionItem> promotionItems, List<Item> itemList) {
-        itemSaveRequest.getItems().forEach(itemRequest -> {
+    private void separateItemRequests(ItemSaveRequest itemSaveRequest, List<PromotionItem> promotionItems,
+                                      List<Item> itemList) {
+        for (ItemRequest itemRequest : itemSaveRequest.getItems()) {
             if (!isPromotionItem(itemRequest)) {
                 itemList.add(Item.create(idHolder, itemRequest));
+                continue;
             }
-            if (isPromotionItem(itemRequest)) {
-                findPromotionItemNameAndAddList(promotionItems, itemList, itemRequest);
-            }
-        });
+            addPromotionItem(promotionItems, itemRequest);
+        }
     }
 
-    private void findPromotionItemNameAndAddList(List<PromotionItem> promotionItems, List<Item> itemList, ItemRequest itemRequest) {
-        itemList.forEach(item -> {
-            if(item.getName().equals(itemRequest.getName())){
-                promotionItems.add(PromotionItem.create(idHolder, item, itemRequest));
-            }
-        });
+    private void addPromotionItem(List<PromotionItem> promotionItems, ItemRequest itemRequest) {
+        PromotionRule promotionRule = promotionRuleRepository.findById(itemRequest.getPromotionRule()
+                .orElseThrow(() -> new IllegalArgumentException("promotionRule not found")));
+        promotionItems.add(PromotionItem.create(idHolder, itemRequest, promotionRule));
     }
 
     private void saveGeneralItem(Item item) {
