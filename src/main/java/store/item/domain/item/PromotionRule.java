@@ -36,12 +36,24 @@ public class PromotionRule {
     }
 
     public long getPromotionQuantity(long buyQuantityInput) {
-        long promotionCount = buyQuantityInput / buyQuantity;
+        long promotionCount = buyQuantityInput / (buyQuantity + promotionQuantity);
         return promotionQuantity * promotionCount;
     }
 
     public boolean isPromotionDate(Date nowDate) {
         return startDate.after(nowDate) && endDate.before(nowDate);
+    }
+
+    public long getPromotionQuantitySum() {
+        return buyQuantity + promotionQuantity;
+    }
+
+    public long getBuyQuantity() {
+        return buyQuantity;
+    }
+
+    public long getPromotionQuantity() {
+        return promotionQuantity;
     }
 
     public String getName() {

@@ -23,6 +23,44 @@ public class ItemInfo {
         return new ItemInfo(item, null, false);
     }
 
+    public ItemInfo purchase(long amount) {
+        if (!canPurchase(amount)) {
+            throw new IllegalArgumentException("구매 수량 초과");
+        }
+        if (isPromotion) {
+            if (amount > promotionItem.getStockQuantity()) {
+                return purchaseWhenAmountIsBiggerThanPromotion(amount);
+            }
+            return purchaseWhenAmountIsSameAndLessThanPromotion(amount);
+        }
+        return purchaseGeneralItem(amount);
+    }
+
+    private ItemInfo purchaseWhenAmountIsBiggerThanPromotion(long amount) {
+        long purchasePromotionAmount = promotionItem.getStockQuantity();
+        long purchaseGeneralAmount = amount - purchasePromotionAmount;
+        Item purchasedItem = item.purchase(purchaseGeneralAmount);
+        PromotionItem purchasedPromotionItem = promotionItem.purchase(purchasePromotionAmount);
+        return new ItemInfo(purchasedItem, purchasedPromotionItem, false);
+    }
+
+    private ItemInfo purchaseWhenAmountIsSameAndLessThanPromotion(long amount) {
+        PromotionItem purchasedPromotionItem = promotionItem.purchase(amount);
+        if (purchasedPromotionItem.getStockQuantity() == 0) {
+            return new ItemInfo(item, purchasedPromotionItem, false);
+        }
+        return new ItemInfo(item, purchasedPromotionItem, true);
+    }
+
+    private ItemInfo purchaseGeneralItem(long amount) {
+        Item purchased = item.purchase(amount);
+        return new ItemInfo(purchased, promotionItem, false);
+    }
+
+    public boolean canPurchase(long amount) {
+        return amount <= (item.getStockQuantity() + promotionItem.getStockQuantity());
+    }
+
     public Item getItem() {
         return item;
     }
@@ -34,4 +72,8 @@ public class ItemInfo {
         return promotionItem;
     }
 
+    public boolean isPromotion() {
+        return isPromotion;
+    }
+    // 만약 프로모션이면 상품을 몇개 구매할 수 있는지
 }

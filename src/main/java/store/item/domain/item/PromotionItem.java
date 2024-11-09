@@ -6,53 +6,59 @@ import store.item.controller.dto.request.ItemRequest;
 
 public class PromotionItem {
     private final String promotionItemId;
-    private final String itemId;
     private final String name;
     private final PromotionRule promotionRule;
-    private final long promotionStockQuantity;
+    private final long stockQuantity;
 
-    private PromotionItem(String promotionItemId, String itemId, String name, PromotionRule promotionRule,
-                          long promotionStockQuantity) {
+    private PromotionItem(String promotionItemId, String name, PromotionRule promotionRule, long stockQuantity) {
         this.promotionItemId = promotionItemId;
-        this.itemId = itemId;
         this.name = name;
         this.promotionRule = promotionRule;
-        this.promotionStockQuantity = promotionStockQuantity;
+        this.stockQuantity = stockQuantity;
     }
 
-    public static PromotionItem create(IdHolder idHolder, Item item, ItemRequest itemRequest) {
+    public static PromotionItem create(IdHolder idHolder, ItemRequest itemRequest,
+                                       PromotionRule promotionRule) {
         if (!itemRequest.isPromotionRuleExist()) {
             throw new IllegalArgumentException("not a promotion Item");
         }
-        return new PromotionItem(idHolder.generateId(), item.getId(), itemRequest.getName(),
-                itemRequest.getPromotionRule().get(), itemRequest.getQuantity());
+        return new PromotionItem(idHolder.generateId(), itemRequest.getName(), promotionRule,
+                itemRequest.getQuantity());
     }
 
     public PromotionItem purchase(long quantity) {
-        if (promotionStockQuantity < quantity) {
+        if (stockQuantity < quantity) {
             throw new IllegalArgumentException();
         }
-        return new PromotionItem(promotionItemId, itemId, name, promotionRule, promotionStockQuantity - quantity);
+        return new PromotionItem(promotionItemId, name, promotionRule, stockQuantity - quantity);
     }
 
     public String getPromotionItemId() {
         return promotionItemId;
     }
 
-    public String getItemId() {
-        return itemId;
-    }
-
     public String getName() {
         return name;
     }
 
-    public long getPromotionStockQuantity() {
-        return promotionStockQuantity;
+    public long getStockQuantity() {
+        return stockQuantity;
     }
 
     public long getPromotionQuantity(long buyQuantityInput) {
         return promotionRule.getPromotionQuantity(buyQuantityInput);
+    }
+
+    public long getPromotionRuleQuantitySum() {
+        return promotionRule.getPromotionQuantitySum();
+    }
+
+    public long getPromotionBuyQuantity() {
+        return promotionRule.getBuyQuantity();
+    }
+
+    public long getPromotionGetQuantity() {
+        return promotionRule.getPromotionQuantity();
     }
 
     public boolean isActive(Date nowDate) {
