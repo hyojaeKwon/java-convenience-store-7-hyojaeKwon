@@ -18,8 +18,7 @@ public class PromotionDiscount {
 
     public PromotionDiscount resolveGetMoreConflict(String name) {
         List<PromotionDiscountInfo> discountInfos = promotionDiscountsInfos.stream()
-                .filter(info -> info.getName().equals(name))
-                .map(PromotionDiscountInfo::resolveCanGetMore).toList();
+                .filter(info -> info.getName().equals(name)).map(PromotionDiscountInfo::resolveCanGetMore).toList();
         return new PromotionDiscount(discountInfos);
     }
 
@@ -31,7 +30,8 @@ public class PromotionDiscount {
 
     public long sumOfDiscountAmount() {
         return promotionDiscountsInfos.stream()
-                .map(i -> i.getPromotionDiscountItem().getDiscountAmount() * i.getPromotionDiscountItem().getPrice()).reduce(0L, Long::sum);
+                .map(i -> i.getPromotionDiscountItem().getDiscountAmount() * i.getPromotionDiscountItem().getPrice())
+                .reduce(0L, Long::sum);
     }
 
 }
