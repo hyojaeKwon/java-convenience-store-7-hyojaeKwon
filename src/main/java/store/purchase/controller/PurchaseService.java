@@ -11,5 +11,7 @@ public interface PurchaseService {
 
     void solvePromotionConflict(GeneralTransfer<ResolveItemRequest> request);
 
-    Receipt applyMemberShip(GeneralTransfer<Boolean> request);
+    void applyMemberShip(GeneralTransfer<Boolean> request);
+
+    Receipt getReceipt(GeneralTransfer<Void> request);
 }
