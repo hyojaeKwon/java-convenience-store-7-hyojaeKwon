@@ -71,7 +71,7 @@ public class Purchase {
     }
 
     public PromotionDiscount getPromotionDiscount() {
-        if (status != PurchaseStatus.CONFLICTED) {
+        if (promotionDiscount == null) {
             throw new IllegalStateException();
         }
         return promotionDiscount;
