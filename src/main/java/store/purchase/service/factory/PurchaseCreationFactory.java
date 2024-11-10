@@ -21,7 +21,7 @@ public class PurchaseCreationFactory {
 
     private PurchaseCreate createPurchase(PurchaseItemRequest request) {
         ItemInfo itemInfo = itemStockService.getItemInfoByName(request.getName());
-        if (itemInfo.canPurchase(request.getQuantity())) {
+        if (!itemInfo.canPurchase(request.getQuantity())) {
             throw new IllegalArgumentException("구매할 수 없다");
         }
         return PurchaseCreate.create(request, itemInfo.getPrice(), itemInfo.isPromotion());
