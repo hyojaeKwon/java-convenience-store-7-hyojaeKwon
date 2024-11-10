@@ -58,7 +58,7 @@ public class ItemRepositoryImpl implements ItemRepository {
 
     @Override
     public Optional<Item> findByName(String name) {
-        return Optional.ofNullable(itemMap.get(name));
+        return itemMap.values().stream().filter(item -> item.getName().equals(name)).findFirst();
     }
 
     @Override
