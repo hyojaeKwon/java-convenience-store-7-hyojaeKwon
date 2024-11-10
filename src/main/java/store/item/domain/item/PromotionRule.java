@@ -1,6 +1,11 @@
 package store.item.domain.item;
 
+import static store.common.exception.domain.DomainArgumentException.RULE_EXPIRATION_INVALID;
+import static store.common.exception.domain.DomainArgumentException.RULE_NAME;
+import static store.common.exception.domain.DomainArgumentException.RULE_QUANTITY;
+
 import java.util.Date;
+import store.common.exception.domain.DomainArgumentException;
 import store.item.controller.dto.request.PromotionRuleRequest;
 
 public class PromotionRule {
@@ -27,11 +32,14 @@ public class PromotionRule {
     }
 
     private static void validate(PromotionRuleRequest promotionRuleRequest) {
+        if (promotionRuleRequest.getName() == null || promotionRuleRequest.getName().isEmpty()) {
+            throw new DomainArgumentException(RULE_NAME);
+        }
         if (promotionRuleRequest.getBuyQuantity() <= 0 || promotionRuleRequest.getGetQuantity() <= 0) {
-            throw new IllegalArgumentException();
+            throw new DomainArgumentException(RULE_QUANTITY);
         }
         if (!promotionRuleRequest.getEndDate().after(promotionRuleRequest.getStartDate())) {
-            throw new IllegalArgumentException();
+            throw new DomainArgumentException(RULE_EXPIRATION_INVALID);
         }
     }
 
@@ -50,14 +58,6 @@ public class PromotionRule {
 
     public long getPromotionQuantitySum() {
         return buyQuantity + promotionQuantity;
-    }
-
-    public long getBuyQuantity() {
-        return buyQuantity;
-    }
-
-    public long getPromotionQuantity() {
-        return promotionQuantity;
     }
 
     public String getName() {

@@ -1,6 +1,7 @@
 package store.item.domain.item;
 
 import java.util.Date;
+import store.common.exception.domain.DomainStateException;
 import store.common.util.IdHolder;
 import store.item.controller.dto.request.ItemRequest;
 
@@ -20,7 +21,7 @@ public class PromotionItem {
     public static PromotionItem create(IdHolder idHolder, ItemRequest itemRequest,
                                        PromotionRule promotionRule) {
         if (!itemRequest.isPromotionRuleExist()) {
-            throw new IllegalArgumentException("not a promotion Item");
+            throw new DomainStateException(DomainStateException.NOT_PROMOTION);
         }
         return new PromotionItem(idHolder.generateId(), itemRequest.getName(), promotionRule,
                 itemRequest.getQuantity());
@@ -47,14 +48,6 @@ public class PromotionItem {
 
     public long getPromotionRuleQuantitySum() {
         return promotionRule.getPromotionQuantitySum();
-    }
-
-    public long getPromotionBuyQuantity() {
-        return promotionRule.getBuyQuantity();
-    }
-
-    public long getPromotionGetQuantity() {
-        return promotionRule.getPromotionQuantity();
     }
 
     public long getPromotionQuantity(long buyQuantityInput) {

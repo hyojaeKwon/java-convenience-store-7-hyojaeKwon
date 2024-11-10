@@ -1,5 +1,9 @@
 package store.item.domain.item;
 
+import static store.common.exception.domain.DomainArgumentException.EXCEED_AMOUNT;
+import static store.common.exception.domain.DomainArgumentException.NEG_AMOUNT;
+
+import store.common.exception.domain.DomainArgumentException;
 import store.common.util.IdHolder;
 import store.item.controller.dto.request.ItemRequest;
 
@@ -17,22 +21,17 @@ public class Item {
         this.stockQuantity = stockQuantity;
     }
 
-    // static factory method
-
-    public static Item of(IdHolder idHolder, String name, long price, long stockQuantity) {
-        return new Item(idHolder.generateId(), name, price, stockQuantity);
-    }
-
     public static Item create(IdHolder idHolder, ItemRequest itemRequest) {
         return new Item(idHolder.generateId(), itemRequest.getName(), itemRequest.getPrice(),
                 itemRequest.getQuantity());
     }
 
-    // factory method
-
     public Item purchase(long quantity) {
+        if (quantity < 0L) {
+            throw new DomainArgumentException(NEG_AMOUNT);
+        }
         if (quantity > stockQuantity) {
-            throw new IllegalArgumentException();
+            throw new DomainArgumentException(EXCEED_AMOUNT);
         }
         return new Item(id, name, price, stockQuantity - quantity);
     }

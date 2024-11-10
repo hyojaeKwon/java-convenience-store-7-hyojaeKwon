@@ -1,5 +1,10 @@
 package store.item.domain.item.value;
 
+import static store.common.exception.domain.DomainArgumentException.EXCEED_AMOUNT;
+import static store.common.exception.domain.DomainStateException.NOT_PROMOTION;
+
+import store.common.exception.domain.DomainArgumentException;
+import store.common.exception.domain.DomainStateException;
 import store.item.domain.item.Item;
 import store.item.domain.item.PromotionItem;
 
@@ -25,7 +30,7 @@ public class ItemInfo {
 
     public ItemInfo purchase(long amount) {
         if (!canPurchase(amount)) {
-            throw new IllegalArgumentException("구매 수량 초과");
+            throw new DomainArgumentException(EXCEED_AMOUNT);
         }
         if (isPromotion) {
             if (amount > promotionItem.getStockQuantity()) {
@@ -64,18 +69,6 @@ public class ItemInfo {
         return amount <= item.getStockQuantity();
     }
 
-    public Item getItem() {
-        return item;
-    }
-
-    public boolean isPromotion() {
-        return isPromotion;
-    }
-
-    public long getPrice() {
-        return item.getPrice();
-    }
-
     public PromotionItem getPromotionItem() {
         checkPromotion();
         return promotionItem;
@@ -101,7 +94,19 @@ public class ItemInfo {
 
     private void checkPromotion() {
         if (!isPromotion) {
-            throw new IllegalArgumentException("promotion중인 상품이 아님");
+            throw new DomainStateException(NOT_PROMOTION);
         }
+    }
+
+    public Item getItem() {
+        return item;
+    }
+
+    public boolean isPromotion() {
+        return isPromotion;
+    }
+
+    public long getPrice() {
+        return item.getPrice();
     }
 }
