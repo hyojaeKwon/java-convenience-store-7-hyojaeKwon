@@ -45,10 +45,6 @@ public class PromotionItem {
         return stockQuantity;
     }
 
-    public long getPromotionQuantity(long buyQuantityInput) {
-        return promotionRule.getPromotionQuantity(buyQuantityInput);
-    }
-
     public long getPromotionRuleQuantitySum() {
         return promotionRule.getPromotionQuantitySum();
     }
@@ -59,6 +55,18 @@ public class PromotionItem {
 
     public long getPromotionGetQuantity() {
         return promotionRule.getPromotionQuantity();
+    }
+
+    public long getPromotionQuantity(long buyQuantityInput) {
+        return promotionRule.getPromotionQuantity(buyQuantityInput);
+    }
+
+    public boolean judgeCanGetOneMore(long buyQuantityInput) {
+        return promotionRule.canGetOneMore(buyQuantityInput);
+    }
+
+    public PromotionRule getPromotionRule() {
+        return promotionRule;
     }
 
     public boolean isActive(Date nowDate) {

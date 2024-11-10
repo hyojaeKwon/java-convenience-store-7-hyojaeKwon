@@ -30,7 +30,7 @@ public class PromotionRule {
         if (promotionRuleRequest.getBuyQuantity() <= 0 || promotionRuleRequest.getGetQuantity() <= 0) {
             throw new IllegalArgumentException();
         }
-        if (promotionRuleRequest.getEndDate().after(promotionRuleRequest.getStartDate())) {
+        if (!promotionRuleRequest.getEndDate().after(promotionRuleRequest.getStartDate())) {
             throw new IllegalArgumentException();
         }
     }
@@ -38,6 +38,10 @@ public class PromotionRule {
     public long getPromotionQuantity(long buyQuantityInput) {
         long promotionCount = buyQuantityInput / (buyQuantity + promotionQuantity);
         return promotionQuantity * promotionCount;
+    }
+
+    public boolean canGetOneMore(long buyQuantityInput) {
+        return (buyQuantity) == (buyQuantityInput % (buyQuantity + promotionQuantity));
     }
 
     public boolean isPromotionDate(Date nowDate) {

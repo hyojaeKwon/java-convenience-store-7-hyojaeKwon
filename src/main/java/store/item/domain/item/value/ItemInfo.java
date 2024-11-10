@@ -41,15 +41,15 @@ public class ItemInfo {
         long purchaseGeneralAmount = amount - purchasePromotionAmount;
         Item purchasedItem = item.purchase(purchaseGeneralAmount);
         PromotionItem purchasedPromotionItem = promotionItem.purchase(purchasePromotionAmount);
-        return new ItemInfo(purchasedItem, purchasedPromotionItem, false);
+        return new ItemInfo(purchasedItem, purchasedPromotionItem, isPromotion);
     }
 
     private ItemInfo purchaseWhenAmountIsSameAndLessThanPromotion(long amount) {
         PromotionItem purchasedPromotionItem = promotionItem.purchase(amount);
         if (purchasedPromotionItem.getStockQuantity() == 0) {
-            return new ItemInfo(item, purchasedPromotionItem, false);
+            return new ItemInfo(item, purchasedPromotionItem, isPromotion);
         }
-        return new ItemInfo(item, purchasedPromotionItem, true);
+        return new ItemInfo(item, purchasedPromotionItem, isPromotion);
     }
 
     private ItemInfo purchaseGeneralItem(long amount) {
@@ -58,22 +58,50 @@ public class ItemInfo {
     }
 
     public boolean canPurchase(long amount) {
-        return amount <= (item.getStockQuantity() + promotionItem.getStockQuantity());
+        if (isPromotion) {
+            return amount <= (item.getStockQuantity() + promotionItem.getStockQuantity());
+        }
+        return amount <= item.getStockQuantity();
     }
 
     public Item getItem() {
         return item;
     }
 
-    public PromotionItem getPromotionItem() {
-        if (!isPromotion) {
-            throw new IllegalArgumentException("promotion중인 상품이 아님");
-        }
-        return promotionItem;
-    }
-
     public boolean isPromotion() {
         return isPromotion;
     }
-    // 만약 프로모션이면 상품을 몇개 구매할 수 있는지
+
+    public long getPrice() {
+        return item.getPrice();
+    }
+
+    public PromotionItem getPromotionItem() {
+        checkPromotion();
+        return promotionItem;
+    }
+
+    public long judgePromotionAmount(long buyAmount) {
+        checkPromotion();
+        if (buyAmount > promotionItem.getStockQuantity()) {
+            return promotionItem.getPromotionQuantity(promotionItem.getStockQuantity());
+        }
+        return promotionItem.getPromotionQuantity(buyAmount);
+    }
+
+    public long judgeCannotPromotionAmount(long buyAmount) {
+        checkPromotion();
+        return buyAmount - (judgePromotionAmount(buyAmount) * promotionItem.getPromotionRuleQuantitySum());
+    }
+
+    public boolean judgeGetMorePromotion(long buyAmount) {
+        checkPromotion();
+        return promotionItem.judgeCanGetOneMore(buyAmount);
+    }
+
+    private void checkPromotion() {
+        if (!isPromotion) {
+            throw new IllegalArgumentException("promotion중인 상품이 아님");
+        }
+    }
 }
