@@ -1,6 +1,7 @@
 package store.purchase.service;
 
 import java.util.List;
+import store.item.controller.ItemPurchaseService;
 import store.purchase.controller.PurchaseDiscountService;
 import store.purchase.controller.PurchaseService;
 import store.purchase.controller.dto.GeneralTransfer;
@@ -22,14 +23,17 @@ public class PurchaseServiceImpl implements PurchaseService {
     private final PurchaseDiscountService purchaseDiscountService;
     private final PurchaseCreationFactory purchaseCreationFactory;
     private final PurchaseRepository purchaseRepository;
+    private final ItemPurchaseService itemPurchaseService;
 
     public PurchaseServiceImpl(PromotionDiscountConflictFactory conflictFactory,
                                PurchaseDiscountService purchaseDiscountService,
-                               PurchaseCreationFactory purchaseCreationFactory, PurchaseRepository purchaseRepository) {
+                               PurchaseCreationFactory purchaseCreationFactory, PurchaseRepository purchaseRepository,
+                               ItemPurchaseService itemPurchaseService) {
         this.conflictFactory = conflictFactory;
         this.purchaseDiscountService = purchaseDiscountService;
         this.purchaseCreationFactory = purchaseCreationFactory;
         this.purchaseRepository = purchaseRepository;
+        this.itemPurchaseService = itemPurchaseService;
     }
 
     @Override
@@ -49,7 +53,6 @@ public class PurchaseServiceImpl implements PurchaseService {
         for (ResolveRequest resolveRequest : conflicts) {
             purchase = resovlePurchase(purchase, resolveRequest);
         }
-
         purchase = purchase.resolveAllPromotionConflicts();
         purchaseRepository.save(purchase);
     }
@@ -58,7 +61,7 @@ public class PurchaseServiceImpl implements PurchaseService {
         if (request.getStatus() == PromotionDiscountStatus.GET_MORE && (request.isSolve())) {
             return purchase.addPurchaseAmount(request.getName(), request.getQuantity());
         }
-        if (request.getStatus() == PromotionDiscountStatus.CANT_DISCOUNT_ALL && (request.isSolve())) {
+        if (request.getStatus() == PromotionDiscountStatus.CANT_DISCOUNT_ALL && (!request.isSolve())) {
             return purchase.removePurchaseAmount(request.getName(), request.getQuantity());
         }
         return purchase;
@@ -67,14 +70,16 @@ public class PurchaseServiceImpl implements PurchaseService {
     @Override
     public void applyMemberShip(GeneralTransfer<Boolean> request) {
         Purchase purchase = purchaseRepository.findById(request.getUserId());
-        if (request.getContext()) {
-            purchaseDiscountService.applyMembershipDiscount(purchase);
+        if (Boolean.TRUE.equals(request.getContext())) {
+            purchase = purchaseDiscountService.applyMembershipDiscount(purchase);
         }
+        purchaseRepository.save(purchase);
     }
 
     @Override
     public Receipt getReceipt(GeneralTransfer<Void> request) {
         Purchase purchase = purchaseRepository.findById(request.getUserId());
+        purchase.getPurchaseItems().forEach(purchaseItem -> itemPurchaseService.purchase(purchaseItem.getName(), purchaseItem.getAmount()));
         return Receipt.create(purchase);
     }
 
