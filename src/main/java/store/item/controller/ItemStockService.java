@@ -7,4 +7,6 @@ public interface ItemStockService {
     void updateItemStock(ItemInfo itemInfo);
 
     List<ItemInfo> getAllItemInfo();
+
+    ItemInfo getItemInfoByName(String name);
 }
