@@ -56,6 +56,10 @@ public class ResourceItemConverter {
         } catch (IndexOutOfBoundsException e) {
             return Optional.empty();
         }
+        return checkStringIsEmpty(promotion);
+    }
+
+    private Optional<String> checkStringIsEmpty(String promotion) {
         if (promotion == null || promotion.isEmpty() || promotion.equals("null")) {
             return Optional.empty();
         }
