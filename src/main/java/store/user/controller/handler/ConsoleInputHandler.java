@@ -15,16 +15,15 @@ public class ConsoleInputHandler {
         this.parser = parser;
     }
 
-    // 입력 받아서 구매 객체로 parse
     public PurchaseRequest purchaseInput() {
         String purchaseRawInput = inputProvider.readLine();
         Validator.validateString(purchaseRawInput);
         return parser.parseStringToPurchaseRequest(purchaseRawInput);
     }
 
-    // Y 나 N 입력받기
     public boolean controlInput() {
         String control = inputProvider.readLine();
+        Validator.validateString(control);
         return parser.parseControlStringToBoolean(control);
     }
 
