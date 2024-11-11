@@ -1,6 +1,9 @@
 package store.purchase.domain;
 
+import static store.common.exception.domain.DomainStateException.WRONG_ACCESS;
+
 import java.util.List;
+import store.common.exception.domain.DomainStateException;
 import store.purchase.domain.discount.membership.MembershipDiscount;
 import store.purchase.domain.discount.promotion.PromotionDiscount;
 import store.purchase.domain.value.PurchaseItem;
@@ -40,11 +43,11 @@ public class Purchase {
     }
 
     public Purchase addPurchaseAmount(String name, long quantity) {
-        return updatePurchaseAmount(name, quantity); // 수량을 더함
+        return updatePurchaseAmount(name, quantity);
     }
 
     public Purchase removePurchaseAmount(String name, long quantity) {
-        return updatePurchaseAmount(name, -quantity); // 수량을 뺌
+        return updatePurchaseAmount(name, -quantity);
     }
 
     private Purchase updatePurchaseAmount(String name, long quantity) {
@@ -72,14 +75,14 @@ public class Purchase {
 
     public PromotionDiscount getPromotionDiscount() {
         if (promotionDiscount == null) {
-            throw new IllegalStateException();
+            throw new DomainStateException(WRONG_ACCESS);
         }
         return promotionDiscount;
     }
 
     public MembershipDiscount getMembershipDiscount() {
         if (status != PurchaseStatus.RESOLVED) {
-            throw new IllegalStateException();
+            throw new DomainStateException(WRONG_ACCESS);
         }
         return membershipDiscount;
     }

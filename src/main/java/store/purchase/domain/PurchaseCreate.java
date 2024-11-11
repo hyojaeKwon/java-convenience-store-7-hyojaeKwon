@@ -1,5 +1,10 @@
 package store.purchase.domain;
 
+import static store.common.exception.domain.DomainArgumentException.PURCHASE_NEG_AMOUNT;
+import static store.common.exception.domain.DomainStateException.PRODUCTION_PRICE_NEG;
+
+import store.common.exception.domain.DomainArgumentException;
+import store.common.exception.domain.DomainStateException;
 import store.purchase.controller.dto.request.purchase.PurchaseItemRequest;
 
 public class PurchaseCreate {
@@ -24,10 +29,10 @@ public class PurchaseCreate {
 
     private static void validation(PurchaseCreate purchaseCreate) {
         if (purchaseCreate.getQuantity() <= 0) {
-            throw new IllegalArgumentException();
+            throw new DomainArgumentException(PURCHASE_NEG_AMOUNT);
         }
         if (purchaseCreate.getPrice() < 0) {
-            throw new IllegalArgumentException();
+            throw new DomainStateException(PRODUCTION_PRICE_NEG);
         }
     }
 

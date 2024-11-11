@@ -1,6 +1,5 @@
 package store.purchase.domain.discount.promotion;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -20,12 +19,6 @@ public class PromotionDiscount {
         List<PromotionDiscountInfo> discountInfos = promotionDiscountsInfos.stream()
                 .filter(info -> info.getName().equals(name)).map(PromotionDiscountInfo::resolveCanGetMore).toList();
         return new PromotionDiscount(discountInfos);
-    }
-
-    public PromotionDiscount addPromotionDiscount(PromotionDiscountInfo promotionDiscountItem) {
-        ArrayList<PromotionDiscountInfo> newPromotionDiscounts = new ArrayList<>(promotionDiscountsInfos);
-        newPromotionDiscounts.add(promotionDiscountItem);
-        return new PromotionDiscount(newPromotionDiscounts);
     }
 
     public long sumOfDiscountAmount() {

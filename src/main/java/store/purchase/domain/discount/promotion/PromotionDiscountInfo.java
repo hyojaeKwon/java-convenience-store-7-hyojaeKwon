@@ -6,6 +6,8 @@ import static store.purchase.domain.discount.promotion.PromotionDiscountStatus.R
 
 public class PromotionDiscountInfo {
 
+    private static final int GET_MORE_QUANTITY = 1;
+
     private final PromotionDiscountItem promotionDiscountItem;
     private final PromotionDiscountStatus status;
     private final long statusQuantity;
@@ -18,7 +20,8 @@ public class PromotionDiscountInfo {
     }
 
     public static PromotionDiscountInfo create(PromotionDiscountItem promotionDiscountItem) {
-        return new PromotionDiscountInfo(promotionDiscountItem, RESOLVED, 0);
+        int initialValue = 0;
+        return new PromotionDiscountInfo(promotionDiscountItem, RESOLVED, initialValue);
     }
 
     public static PromotionDiscountInfo createCanGetMore(PromotionDiscountItem promotionDiscountItem, long quantity) {
@@ -32,13 +35,9 @@ public class PromotionDiscountInfo {
 
     public PromotionDiscountInfo resolveCanGetMore() {
         PromotionDiscountItem discountItem = new PromotionDiscountItem(promotionDiscountItem.getName(),
-                promotionDiscountItem.getPrice(), promotionDiscountItem.getBuyAmount() + 1,
-                promotionDiscountItem.getDiscountAmount() + 1);
+                promotionDiscountItem.getPrice(), promotionDiscountItem.getBuyAmount() + GET_MORE_QUANTITY,
+                promotionDiscountItem.getDiscountAmount() + GET_MORE_QUANTITY);
         return new PromotionDiscountInfo(discountItem, RESOLVED, statusQuantity);
-    }
-
-    public PromotionDiscountInfo resolveDiscountConflict() {
-        return new PromotionDiscountInfo(promotionDiscountItem, RESOLVED, 0);
     }
 
     public long getStatusQuantity() {
