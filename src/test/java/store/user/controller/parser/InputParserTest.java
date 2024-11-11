@@ -1,18 +1,16 @@
 package store.user.controller.parser;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
+
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import store.common.exception.input.InputException;
 import store.purchase.controller.dto.request.purchase.PurchaseItemRequest;
 import store.purchase.controller.dto.request.purchase.PurchaseRequest;
-import store.user.controller.parser.InputParser;
-
-import java.time.LocalDateTime;
-import java.util.List;
-
-import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 class InputParserTest {
 
@@ -43,8 +41,7 @@ class InputParserTest {
     @DisplayName("Long으로 변환할 수 없는 문자열일 경우 예외를 발생시킨다")
     void testParseStringToLongWithInvalidNumber() {
         String input = "aaa";
-        assertThatThrownBy(() -> parser.parseStringToLong(input))
-                .isInstanceOf(InputException.class);
+        assertThatThrownBy(() -> parser.parseStringToLong(input)).isInstanceOf(InputException.class);
     }
 
     @Test
@@ -59,8 +56,7 @@ class InputParserTest {
     @DisplayName("잘못된 날짜 형식의 문자열일 경우 예외를 발생시킨다")
     void testParseStringToDateWithInvalidDate() {
         String input = "11-11-2023";
-        assertThatThrownBy(() -> parser.parseStringToDate(input))
-                .isInstanceOf(InputException.class);
+        assertThatThrownBy(() -> parser.parseStringToDate(input)).isInstanceOf(InputException.class);
     }
 
     @Test
@@ -82,8 +78,7 @@ class InputParserTest {
     @DisplayName("잘못된 형식의 문자열을 변환할 경우 예외를 발생시킨다")
     void testParseStringToPurchaseRequestWithInvalidFormat() {
         String input = "item1-10,item2-5";
-        assertThatThrownBy(() -> parser.parseStringToPurchaseRequest(input))
-                .isInstanceOf(InputException.class);
+        assertThatThrownBy(() -> parser.parseStringToPurchaseRequest(input)).isInstanceOf(InputException.class);
     }
 
     @Test
@@ -96,7 +91,6 @@ class InputParserTest {
     @Test
     @DisplayName("Y/N 이외의 문자열일 경우 예외를 발생시킨다")
     void testParseControlStringToBooleanWithInvalidInput() {
-        assertThatThrownBy(() -> parser.parseControlStringToBoolean("y"))
-                .isInstanceOf(InputException.class);
+        assertThatThrownBy(() -> parser.parseControlStringToBoolean("y")).isInstanceOf(InputException.class);
     }
 }

@@ -21,7 +21,7 @@ class PurchaseTest {
 
     @BeforeEach
     void setUp() {
-        PurchaseItemRequest request = new PurchaseItemRequest("item", 10);  // name: "item", quantity: 10
+        PurchaseItemRequest request = new PurchaseItemRequest("item", 10);
         long price = 100L;
         boolean isPromotion = true;
         String id = "12345";

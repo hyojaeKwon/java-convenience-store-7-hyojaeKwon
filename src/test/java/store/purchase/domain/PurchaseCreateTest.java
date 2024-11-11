@@ -10,7 +10,7 @@ class PurchaseCreateTest {
     @Test
     @DisplayName("정상적인 객체를 생성한다.")
     void testCreatePurchase() {
-        PurchaseItemRequest request = new PurchaseItemRequest("item", 10);  // name: "item", quantity: 10
+        PurchaseItemRequest request = new PurchaseItemRequest("item", 10);
         long price = 100L;
         boolean isPromotion = true;
 
@@ -47,7 +47,7 @@ class PurchaseCreateTest {
     @Test
     @DisplayName("프로모션 아이템이 아닌 경우 객체 생성한다.")
     void testCreateGeneralItem() {
-        PurchaseItemRequest request = new PurchaseItemRequest("nonPromoItem", 5);  // name: "nonPromoItem", quantity: 5
+        PurchaseItemRequest request = new PurchaseItemRequest("nonPromoItem", 5);
         long price = 200L;
         boolean isPromotion = false;
 

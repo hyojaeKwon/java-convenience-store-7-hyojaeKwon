@@ -106,8 +106,8 @@ class ItemStockServiceImplTest {
     @DisplayName("일반 및 프로모션 아이템 포함 목록을 조회한다.")
     void testGetAllItemInfoWithGeneralAndPromotionItems() {
         PromotionItem promotionItem = PromotionItem.create(idHolder, itemRequest, PromotionRule.create(ruleRequest));
-        Item item = Item.create(idHolder, new ItemRequest(itemRequest.getName(), 100, 10, Optional.of(
-                ruleRequest.getName())));
+        Item item = Item.create(idHolder,
+                new ItemRequest(itemRequest.getName(), 100, 10, Optional.of(ruleRequest.getName())));
 
         itemRepository.save(item.getId(), item);
         promotionItemRepository.save(promotionItem.getPromotionItemId(), promotionItem);

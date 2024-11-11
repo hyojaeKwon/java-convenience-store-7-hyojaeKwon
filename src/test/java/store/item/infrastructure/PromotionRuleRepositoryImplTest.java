@@ -6,7 +6,6 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import store.common.exception.repository.RepositoryException;
 import store.item.controller.dto.request.PromotionRuleRequest;
 import store.item.domain.item.PromotionRule;
 
@@ -55,7 +54,8 @@ class PromotionRuleRepositoryImplTest {
     void testUpdate() {
         promotionRuleRepository.save(promotionRule1.getName(), promotionRule1);
 
-        PromotionRuleRequest newPromotionRuleRequest = new PromotionRuleRequest("rule1",1,1,LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1));
+        PromotionRuleRequest newPromotionRuleRequest = new PromotionRuleRequest("rule1", 1, 1,
+                LocalDateTime.now().minusDays(1), LocalDateTime.now().plusDays(1));
         PromotionRule updatedRule = PromotionRule.create(newPromotionRuleRequest);
         PromotionRule result = promotionRuleRepository.update(promotionRule1.getName(), updatedRule);
 
