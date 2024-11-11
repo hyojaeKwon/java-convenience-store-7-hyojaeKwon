@@ -1,8 +1,11 @@
 package store.item.service;
 
+import static store.common.exception.service.ServiceArgumentException.ITEM_NOT_FOUND;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import store.common.exception.service.ServiceArgumentException;
 import store.item.controller.ItemStockService;
 import store.item.domain.item.Item;
 import store.item.domain.item.PromotionItem;
@@ -39,6 +42,14 @@ public class ItemStockServiceImpl implements ItemStockService {
                     .orElseGet(() -> itemInfos.add(ItemInfo.createNotPromotionItemInfo(item)));
         }
         return itemInfos;
+    }
+
+    @Override
+    public ItemInfo getItemInfoByName(String name) {
+        Item item = itemRepository.findByName(name).orElseThrow(() -> new ServiceArgumentException(ITEM_NOT_FOUND));
+        Optional<PromotionItem> promotionItem = promotionItemRepository.findByName(name);
+        return promotionItem.map(value -> ItemInfo.createPromotionItemInfo(item, value))
+                .orElseGet(() -> ItemInfo.createNotPromotionItemInfo(item));
     }
 
     private void updatePromotionItem(PromotionItem promotionItem) {

@@ -1,7 +1,11 @@
 package store.item.service;
 
+import static store.common.exception.service.ServiceArgumentException.RULE_NOT_FOUND;
+
+import camp.nextstep.edu.missionutils.DateTimes;
 import java.util.ArrayList;
 import java.util.List;
+import store.common.exception.service.ServiceArgumentException;
 import store.common.util.IdHolder;
 import store.item.controller.ItemSaveService;
 import store.item.controller.dto.request.ItemRequest;
@@ -59,9 +63,13 @@ public class ItemSaveServiceImpl implements ItemSaveService {
     }
 
     private void addPromotionItem(List<PromotionItem> promotionItems, ItemRequest itemRequest) {
-        PromotionRule promotionRule = promotionRuleRepository.findById(itemRequest.getPromotionRule()
-                .orElseThrow(() -> new IllegalArgumentException("promotionRule not found")));
-        promotionItems.add(PromotionItem.create(idHolder, itemRequest, promotionRule));
+        PromotionRule promotionRule = promotionRuleRepository.findByName(
+                        itemRequest.getPromotionRule().orElseThrow(() -> new ServiceArgumentException(RULE_NOT_FOUND)))
+                .orElseThrow(() -> new ServiceArgumentException(RULE_NOT_FOUND));
+        PromotionItem promotionItem = PromotionItem.create(idHolder, itemRequest, promotionRule);
+        if (promotionItem.isActive(DateTimes.now())) {
+            promotionItems.add(promotionItem);
+        }
     }
 
     private void saveGeneralItem(Item item) {

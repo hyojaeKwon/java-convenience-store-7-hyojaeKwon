@@ -1,6 +1,9 @@
 package store.item.service;
 
+import static store.common.exception.service.ServiceArgumentException.ITEM_NOT_FOUND;
+
 import java.util.Optional;
+import store.common.exception.service.ServiceArgumentException;
 import store.item.controller.ItemPurchaseService;
 import store.item.controller.ItemStockService;
 import store.item.domain.item.Item;
@@ -25,7 +28,7 @@ public class ItemPurchaseServiceImpl implements ItemPurchaseService {
     @Override
     public void purchase(String itemName, long quantity) {
         Item item = itemRepository.findByName(itemName)
-                .orElseThrow(() -> new IllegalArgumentException("item not found"));
+                .orElseThrow(() -> new ServiceArgumentException(ITEM_NOT_FOUND));
         Optional<PromotionItem> promotionItem = promotionItemRepository.findByName(itemName);
         ItemInfo itemInfo = promotionItem.map(value -> ItemInfo.createPromotionItemInfo(item, value))
                 .orElseGet(() -> ItemInfo.createNotPromotionItemInfo(item));
