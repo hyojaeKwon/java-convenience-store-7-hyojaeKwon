@@ -33,12 +33,24 @@ public class PromotionRule {
     }
 
     private static void validate(PromotionRuleRequest promotionRuleRequest) {
+        validateName(promotionRuleRequest);
+        validateQuantity(promotionRuleRequest);
+        validateDateRange(promotionRuleRequest);
+    }
+
+    private static void validateName(PromotionRuleRequest promotionRuleRequest) {
         if (promotionRuleRequest.getName() == null || promotionRuleRequest.getName().isEmpty()) {
             throw new DomainArgumentException(RULE_NAME);
         }
+    }
+
+    private static void validateQuantity(PromotionRuleRequest promotionRuleRequest) {
         if (promotionRuleRequest.getBuyQuantity() <= 0 || promotionRuleRequest.getGetQuantity() <= 0) {
             throw new DomainArgumentException(RULE_QUANTITY);
         }
+    }
+
+    private static void validateDateRange(PromotionRuleRequest promotionRuleRequest) {
         if (!promotionRuleRequest.getEndDate().isAfter(promotionRuleRequest.getStartDate())) {
             throw new DomainArgumentException(RULE_EXPIRATION_INVALID);
         }

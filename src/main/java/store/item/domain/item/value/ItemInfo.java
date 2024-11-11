@@ -33,12 +33,17 @@ public class ItemInfo {
             throw new DomainArgumentException(EXCEED_AMOUNT);
         }
         if (isPromotion) {
-            if (amount > promotionItem.getStockQuantity()) {
-                return purchaseWhenAmountIsBiggerThanPromotion(amount);
-            }
-            return purchaseWhenAmountIsSameAndLessThanPromotion(amount);
+            return handlePromotionPurchase(amount);
+        } else {
+            return purchaseGeneralItem(amount);
         }
-        return purchaseGeneralItem(amount);
+    }
+
+    private ItemInfo handlePromotionPurchase(long amount) {
+        if (amount > promotionItem.getStockQuantity()) {
+            return purchaseWhenAmountIsBiggerThanPromotion(amount);
+        }
+        return purchaseWhenAmountIsSameAndLessThanPromotion(amount);
     }
 
     private ItemInfo purchaseWhenAmountIsBiggerThanPromotion(long amount) {
@@ -51,9 +56,6 @@ public class ItemInfo {
 
     private ItemInfo purchaseWhenAmountIsSameAndLessThanPromotion(long amount) {
         PromotionItem purchasedPromotionItem = promotionItem.purchase(amount);
-        if (purchasedPromotionItem.getStockQuantity() == 0) {
-            return new ItemInfo(item, purchasedPromotionItem, isPromotion);
-        }
         return new ItemInfo(item, purchasedPromotionItem, isPromotion);
     }
 
