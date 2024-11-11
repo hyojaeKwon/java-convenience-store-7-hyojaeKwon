@@ -36,6 +36,11 @@ public class PromotionDiscountInfoFactory {
     private PromotionDiscountInfo getCannotDiscountInfo(ItemInfo itemInfo, long purchaseItemAmount,
                                                         PromotionDiscountItem promotionDiscountItem) {
         long cannotDiscountAmount = itemInfo.judgeCannotPromotionAmount(purchaseItemAmount);
+        return judgeDiscountAmount(promotionDiscountItem, cannotDiscountAmount);
+    }
+
+    private PromotionDiscountInfo judgeDiscountAmount(PromotionDiscountItem promotionDiscountItem,
+                                                      long cannotDiscountAmount) {
         if (cannotDiscountAmount == 0) {
             return PromotionDiscountInfo.create(promotionDiscountItem);
         }

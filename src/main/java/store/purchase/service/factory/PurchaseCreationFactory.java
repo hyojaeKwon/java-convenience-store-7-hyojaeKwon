@@ -1,6 +1,9 @@
 package store.purchase.service.factory;
 
+import static store.common.exception.service.ServiceArgumentException.EXCEED_AMOUNT;
+
 import java.util.List;
+import store.common.exception.service.ServiceArgumentException;
 import store.item.controller.ItemStockService;
 import store.item.domain.item.value.ItemInfo;
 import store.purchase.controller.dto.request.purchase.PurchaseItemRequest;
@@ -22,7 +25,7 @@ public class PurchaseCreationFactory {
     private PurchaseCreate createPurchase(PurchaseItemRequest request) {
         ItemInfo itemInfo = itemStockService.getItemInfoByName(request.getName());
         if (!itemInfo.canPurchase(request.getQuantity())) {
-            throw new IllegalArgumentException("구매할 수 없다");
+            throw new ServiceArgumentException(EXCEED_AMOUNT);
         }
         return PurchaseCreate.create(request, itemInfo.getPrice(), itemInfo.isPromotion());
     }
