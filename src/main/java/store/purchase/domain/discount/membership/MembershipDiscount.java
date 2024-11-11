@@ -6,11 +6,9 @@ import store.common.exception.domain.DomainStateException;
 
 public class MembershipDiscount {
 
-    private final boolean discountFlag;
     private final long discountAmount;
 
-    private MembershipDiscount(boolean discountFlag, long discountAmount) {
-        this.discountFlag = discountFlag;
+    private MembershipDiscount(long discountAmount) {
         this.discountAmount = discountAmount;
     }
 
@@ -18,11 +16,7 @@ public class MembershipDiscount {
         if (discountAmount <= 0) {
             throw new DomainStateException(MEMBERSHIP_DISCOUNT_BOUND);
         }
-        return new MembershipDiscount(true, discountAmount);
-    }
-
-    public boolean isDiscountFlag() {
-        return discountFlag;
+        return new MembershipDiscount(discountAmount);
     }
 
     public long getDiscountAmount() {
