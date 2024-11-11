@@ -16,7 +16,7 @@ public class Purchase {
     private final PurchaseStatus status;
     private final String id;
 
-    public Purchase(PurchaseItems purchaseItems, PromotionDiscount promotionDiscount,
+    private Purchase(PurchaseItems purchaseItems, PromotionDiscount promotionDiscount,
                     MembershipDiscount membershipDiscount, PurchaseStatus status, String id) {
         this.purchaseItems = purchaseItems;
         this.promotionDiscount = promotionDiscount;
