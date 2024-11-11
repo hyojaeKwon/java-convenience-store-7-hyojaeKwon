@@ -1,10 +1,17 @@
 package store.user.controller.parser;
 
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
+import static store.common.exception.input.InputException.NOT_VALID_CONTROL;
+import static store.common.exception.input.InputException.NOT_VALID_DATE;
+import static store.common.exception.input.InputException.NOT_VALID_INPUT;
+import static store.common.exception.input.InputException.NOT_VALID_PARSE;
+
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.List;
 import java.util.regex.PatternSyntaxException;
+import store.common.exception.input.InputException;
 import store.purchase.controller.dto.request.purchase.PurchaseItemRequest;
 import store.purchase.controller.dto.request.purchase.PurchaseRequest;
 import store.user.controller.validator.Validator;
@@ -23,7 +30,7 @@ public class InputParser {
         try {
             return List.of(target.trim().split(LIST_DELIMITER));
         } catch (PatternSyntaxException e) {
-            throw new IllegalArgumentException("pattern syntax이 유효하지 않음");
+            throw new InputException(NOT_VALID_PARSE);
         }
     }
 
@@ -31,16 +38,17 @@ public class InputParser {
         try {
             return Long.parseLong(target.trim());
         } catch (NumberFormatException e) {
-            throw new IllegalArgumentException("입력값이 long으로 변환될 수 업습니다.");
+            throw new InputException(NOT_VALID_PARSE);
         }
     }
 
-    public Date parseStringToDate(String target) {
-        SimpleDateFormat dayFormat = new SimpleDateFormat(DATE_FORMAT);
+    public LocalDateTime parseStringToDate(String target) {
+        DateTimeFormatter dayFormat = DateTimeFormatter.ofPattern(DATE_FORMAT);
         try {
-            return dayFormat.parse(target);
-        } catch (ParseException e) {
-            throw new IllegalArgumentException("날짜 형식이 유효하지 않습니다.");
+            LocalDate nowDate = LocalDate.parse(target, dayFormat);
+            return nowDate.atStartOfDay();
+        } catch (DateTimeParseException e) {
+            throw new InputException(NOT_VALID_DATE);
         }
     }
 
@@ -54,16 +62,16 @@ public class InputParser {
         if (target.equals(CONTROL_AGREE)) {
             return true;
         }
-        if(target.equals(CONTROL_DISAGREE)) {
+        if (target.equals(CONTROL_DISAGREE)) {
             return false;
         }
-        throw new IllegalArgumentException("y/n 중에 하나 입력해야함");
+        throw new InputException(NOT_VALID_CONTROL);
     }
 
     private PurchaseItemRequest extractInnerRequestValue(String request) {
         request = request.trim();
         if (!request.startsWith(PURCHASE_START_PREFIX) || !request.endsWith(PURCHASE_END_PREFIX)) {
-            throw new IllegalArgumentException("구매 입력 형식이 유효하지 않습니다.");
+            throw new InputException(NOT_VALID_INPUT);
         }
         request = request.substring(1, request.length() - 1);
         return parseStringToPurchaseItemRequest(request);
@@ -75,5 +83,6 @@ public class InputParser {
         Validator.validateString(name);
         long amount = parseStringToLong(split[1]);
         return new PurchaseItemRequest(name, amount);
+
     }
 }

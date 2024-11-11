@@ -1,6 +1,9 @@
 package store.item.domain.item;
 
-import java.util.Date;
+import static store.common.exception.domain.DomainArgumentException.EXCEED_AMOUNT;
+
+import java.time.LocalDateTime;
+import store.common.exception.domain.DomainArgumentException;
 import store.common.exception.domain.DomainStateException;
 import store.common.util.IdHolder;
 import store.item.controller.dto.request.ItemRequest;
@@ -18,8 +21,7 @@ public class PromotionItem {
         this.stockQuantity = stockQuantity;
     }
 
-    public static PromotionItem create(IdHolder idHolder, ItemRequest itemRequest,
-                                       PromotionRule promotionRule) {
+    public static PromotionItem create(IdHolder idHolder, ItemRequest itemRequest, PromotionRule promotionRule) {
         if (!itemRequest.isPromotionRuleExist()) {
             throw new DomainStateException(DomainStateException.NOT_PROMOTION);
         }
@@ -29,7 +31,7 @@ public class PromotionItem {
 
     public PromotionItem purchase(long quantity) {
         if (stockQuantity < quantity) {
-            throw new IllegalArgumentException();
+            throw new DomainArgumentException(EXCEED_AMOUNT);
         }
         return new PromotionItem(promotionItemId, name, promotionRule, stockQuantity - quantity);
     }
@@ -62,8 +64,8 @@ public class PromotionItem {
         return promotionRule;
     }
 
-    public boolean isActive(Date nowDate) {
-        return promotionRule.isPromotionDate(nowDate);
+    public boolean isActive(LocalDateTime now) {
+        return promotionRule.isPromotionDate(now);
     }
 
 }

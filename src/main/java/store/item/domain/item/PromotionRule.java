@@ -4,7 +4,7 @@ import static store.common.exception.domain.DomainArgumentException.RULE_EXPIRAT
 import static store.common.exception.domain.DomainArgumentException.RULE_NAME;
 import static store.common.exception.domain.DomainArgumentException.RULE_QUANTITY;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 import store.common.exception.domain.DomainArgumentException;
 import store.item.controller.dto.request.PromotionRuleRequest;
 
@@ -13,10 +13,11 @@ public class PromotionRule {
     private final String name;
     private final long buyQuantity;
     private final long promotionQuantity;
-    private final Date startDate;
-    private final Date endDate;
+    private final LocalDateTime startDate;
+    private final LocalDateTime endDate;
 
-    private PromotionRule(String name, long buyQuantity, long promotionQuantity, Date startDate, Date endDate) {
+    private PromotionRule(String name, long buyQuantity, long promotionQuantity, LocalDateTime startDate,
+                          LocalDateTime endDate) {
         this.name = name;
         this.buyQuantity = buyQuantity;
         this.promotionQuantity = promotionQuantity;
@@ -38,7 +39,7 @@ public class PromotionRule {
         if (promotionRuleRequest.getBuyQuantity() <= 0 || promotionRuleRequest.getGetQuantity() <= 0) {
             throw new DomainArgumentException(RULE_QUANTITY);
         }
-        if (!promotionRuleRequest.getEndDate().after(promotionRuleRequest.getStartDate())) {
+        if (!promotionRuleRequest.getEndDate().isAfter(promotionRuleRequest.getStartDate())) {
             throw new DomainArgumentException(RULE_EXPIRATION_INVALID);
         }
     }
@@ -52,8 +53,8 @@ public class PromotionRule {
         return (buyQuantity) == (buyQuantityInput % (buyQuantity + promotionQuantity));
     }
 
-    public boolean isPromotionDate(Date nowDate) {
-        return startDate.after(nowDate) && endDate.before(nowDate);
+    public boolean isPromotionDate(LocalDateTime now) {
+        return startDate.isBefore(now) && endDate.isAfter(now);
     }
 
     public long getPromotionQuantitySum() {
