@@ -21,7 +21,7 @@ public class MockItemStockService implements ItemStockService {
 
     @Override
     public ItemInfo getItemInfoByName(String name) {
-        Item item = Item.create(new SystemUuidHolder(), new ItemRequest("item", 100, 100, Optional.empty()));
+        Item item = Item.create(new SystemUuidHolder(), new ItemRequest("item", 100, 100, Optional.of("rule")));
         return ItemInfo.createNotPromotionItemInfo(item);
     }
 }
