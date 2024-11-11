@@ -1,5 +1,7 @@
 package store.user.controller.input.reader;
 
+import static store.common.exception.input.InputException.FILE_READ_FAIL;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.StringReader;
@@ -10,6 +12,7 @@ import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import store.common.exception.input.InputException;
 import store.user.controller.validator.Validator;
 
 public class InputFileReader {
@@ -21,7 +24,7 @@ public class InputFileReader {
         try {
             return readFile(PROMOTION);
         } catch (IOException | URISyntaxException e) {
-            throw new IllegalStateException("Could not read rule", e);
+            throw new InputException(FILE_READ_FAIL);
         }
     }
 
@@ -29,7 +32,7 @@ public class InputFileReader {
         try {
             return readFile(PRODUCT);
         } catch (IOException | URISyntaxException e) {
-            throw new IllegalStateException("Could not read item", e);
+            throw new InputException(FILE_READ_FAIL);
         }
     }
 
@@ -50,7 +53,7 @@ public class InputFileReader {
                 line = br.readLine();
             }
         } catch (IOException e) {
-            throw new IllegalStateException("Could not read line", e);
+            throw new InputException(FILE_READ_FAIL);
         }
         return result;
     }

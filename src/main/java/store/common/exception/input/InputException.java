@@ -8,6 +8,9 @@ public class InputException extends IllegalArgumentException {
     public static final String NOT_VALID_DATE = "잘못된 날짜 입력입니다.";
 
     public static final String BLANK_STRING_INPUT = "입력값이 비었습니다.";
+
+    public static final String FILE_READ_FAIL = "파일을 읽어오는데 실패했습니다.";
+
     public InputException(String s) {
         super(s);
     }
