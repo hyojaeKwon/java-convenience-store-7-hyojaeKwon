@@ -26,6 +26,11 @@ public class Item {
                 itemRequest.getQuantity());
     }
 
+    public static Item createMock(IdHolder idHolder, String name, long price) {
+        int mockQuantity = 0;
+        return new Item(idHolder.generateId(), name, price, mockQuantity);
+    }
+
     public Item purchase(long quantity) {
         if (quantity < 0L) {
             throw new DomainArgumentException(NEG_AMOUNT);

@@ -1,5 +1,6 @@
 package store.item.service;
 
+import static store.common.exception.service.ServiceArgumentException.ITEM_NOT_FOUND;
 import static store.common.exception.service.ServiceArgumentException.RULE_NOT_FOUND;
 
 import camp.nextstep.edu.missionutils.DateTimes;
@@ -47,6 +48,7 @@ public class ItemSaveServiceImpl implements ItemSaveService {
         List<PromotionItem> promotionItemList = new ArrayList<>();
 
         separateItemRequests(itemSaveRequest, promotionItemList, itemList);
+        addItem(promotionItemList, itemList, itemSaveRequest);
         itemList.forEach(this::saveGeneralItem);
         promotionItemList.forEach(this::savePromotionItem);
     }
@@ -67,9 +69,31 @@ public class ItemSaveServiceImpl implements ItemSaveService {
                         itemRequest.getPromotionRule().orElseThrow(() -> new ServiceArgumentException(RULE_NOT_FOUND)))
                 .orElseThrow(() -> new ServiceArgumentException(RULE_NOT_FOUND));
         PromotionItem promotionItem = PromotionItem.create(idHolder, itemRequest, promotionRule);
+        checkPromotionActive(promotionItems, promotionItem);
+    }
+
+    private void checkPromotionActive(List<PromotionItem> promotionItems, PromotionItem promotionItem) {
         if (promotionItem.isActive(DateTimes.now())) {
             promotionItems.add(promotionItem);
         }
+    }
+
+    private void addItem(List<PromotionItem> promotionItems, List<Item> items, ItemSaveRequest itemSaveRequest) {
+        promotionItems.forEach(promotionItem -> addItemIfNotExists(promotionItem, items, itemSaveRequest));
+    }
+
+    private void addItemIfNotExists(PromotionItem promotionItem, List<Item> items, ItemSaveRequest itemSaveRequest) {
+        boolean itemExists = items.stream().anyMatch(i -> i.getName().equals(promotionItem.getName()));
+
+        if (!itemExists) {
+            long price = getPriceFromRequest(itemSaveRequest, promotionItem);
+            items.add(Item.createMock(idHolder, promotionItem.getName(), price));
+        }
+    }
+
+    private Long getPriceFromRequest(ItemSaveRequest itemSaveRequest, PromotionItem promotionItem) {
+        return itemSaveRequest.getItems().stream().filter(i -> i.getName().equals(promotionItem.getName())).findFirst()
+                .orElseThrow(() -> new ServiceArgumentException(ITEM_NOT_FOUND)).getPrice();
     }
 
     private void saveGeneralItem(Item item) {
