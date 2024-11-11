@@ -23,11 +23,7 @@ public class PurchaseItem {
     }
 
     public PurchaseItem addPurchaseAmount(long addAmount) {
-        return new PurchaseItem(name, isPromotion, amount + addAmount, price, totalPrice + addAmount *price);
-    }
-
-    public PurchaseItem removePurchaseAmount(long removeAmount) {
-        return new PurchaseItem(name, isPromotion, amount - removeAmount, price, totalPrice - removeAmount * price);
+        return new PurchaseItem(name, isPromotion, amount + addAmount, price, totalPrice + addAmount * price);
     }
 
     public long getTotalPrice() {
