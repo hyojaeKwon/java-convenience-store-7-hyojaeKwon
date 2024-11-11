@@ -1,8 +1,5 @@
 package store.common.util;
 
-import static org.junit.jupiter.api.Assertions.*;
-
-import java.util.UUID;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
